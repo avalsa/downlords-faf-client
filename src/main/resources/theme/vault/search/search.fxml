@@ -53,7 +53,6 @@
                 </JFXButton>
                 <JFXCheckBox fx:id="displayQueryCheckBox" mnemonicParsing="false" text="%vault.replays.displayQuery"/>
                 <JFXCheckBox fx:id="onlyShowLastYearCheckBox" mnemonicParsing="false" text="%vault.replays.onlyShowLastYear"/>
-                <!-- Comment for Frenki because he can't create his own branch -->
             </children>
         </HBox>
         <JFXTextField fx:id="queryTextField" onAction="#onSearchButtonClicked" maxWidth="1.7976931348623157E308"
