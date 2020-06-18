@@ -16,6 +16,7 @@ public class Rating {
   private double mean;
   private double deviation;
   private double rating;
+  private int rank;
 
   @Relationship("player")
   private Player player;
