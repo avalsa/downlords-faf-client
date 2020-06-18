@@ -54,9 +54,8 @@ public class SearchController implements Controller<Pane> {
   public ComboBox<Property> sortPropertyComboBox;
   public ComboBox<SortOrder> sortOrderChoiceBox;
   public HBox sortBox;
-  public CheckBox onlyShowLastYearCheckBox;
 
-  private List<LogicalNodeController> queryNodes;
+  private final List<LogicalNodeController> queryNodes;
   private InvalidationListener queryInvalidationListener;
   /**
    * Called with the query string when the user hits "search".
@@ -78,14 +77,6 @@ public class SearchController implements Controller<Pane> {
   public void initialize() {
     queryTextField.managedProperty().bind(queryTextField.visibleProperty());
     queryTextField.visibleProperty().bind(displayQueryCheckBox.selectedProperty());
-
-    //FIXME code style probably not good
-    onlyShowLastYearCheckBox.selectedProperty().addListener((observable, oldValue, newValue) -> {
-        //TODO implement adding filter to query
-    });
-    onlyShowLastYearCheckBox.setSelected(true);
-    onlyShowLastYearCheckBox.managedProperty().bind(onlyShowLastYearCheckBox.visibleProperty());
-    onlyShowLastYearCheckBox.setVisible(false);
 
     initialLogicalNodeController.logicalOperatorField.managedProperty()
         .bind(initialLogicalNodeController.logicalOperatorField.visibleProperty());
@@ -251,10 +242,6 @@ public class SearchController implements Controller<Pane> {
 
   public void setSearchButtonDisabledCondition(BooleanBinding inSearchableState) {
     searchButton.disableProperty().bind(queryTextField.textProperty().isEmpty().or(inSearchableState.not()));
-  }
-
-  public void setOnlyShowLastYearCheckBoxVisible(boolean visible) {
-    onlyShowLastYearCheckBox.setVisible(visible);
   }
 
   @Getter
