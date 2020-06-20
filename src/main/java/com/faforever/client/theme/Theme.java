@@ -1,5 +1,7 @@
 package com.faforever.client.theme;
 
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
@@ -13,21 +15,20 @@ public class Theme {
   private static final String AUTHOR = "author";
   private static final String COMPATIBILITY_VERSION = "compatibilityVersion";
   private static final String THEME_VERSION = "themeVersion";
+  private static final String NEEDS_RESTART = "needsRestart";
 
-  private StringProperty displayName;
-  private StringProperty author;
-  private SimpleObjectProperty<Integer> compatibilityVersion;
-  private StringProperty themeVersion;
+  private final StringProperty displayName;
+  private final StringProperty author;
+  private final SimpleObjectProperty<Integer> compatibilityVersion;
+  private final StringProperty themeVersion;
+  private final BooleanProperty needsRestart;
 
-  public Theme() {
-    this(null, null, null, null);
-  }
-
-  public Theme(String displayName, String author, Integer compatibilityVersion, String themeVersion) {
+  public Theme(String displayName, String author, Integer compatibilityVersion, String themeVersion, boolean needsRestart) {
     this.displayName = new SimpleStringProperty(displayName);
     this.author = new SimpleStringProperty(author);
     this.compatibilityVersion = new SimpleObjectProperty<>(compatibilityVersion);
     this.themeVersion = new SimpleStringProperty(themeVersion);
+    this.needsRestart = new SimpleBooleanProperty(needsRestart);
   }
 
   public String getDisplayName() {
@@ -78,6 +79,24 @@ public class Theme {
     return themeVersion;
   }
 
+  public static Theme fromProperties(Properties properties) {
+    return new Theme(
+        properties.getProperty(DISPLAY_NAME),
+        properties.getProperty(AUTHOR),
+        Integer.valueOf(properties.getProperty(COMPATIBILITY_VERSION)),
+        properties.getProperty(THEME_VERSION),
+        Boolean.parseBoolean(properties.getProperty(NEEDS_RESTART))
+    );
+  }
+
+  public boolean isNeedsRestart() {
+    return needsRestart.get();
+  }
+
+  public void setNeedsRestart(boolean needsRestart) {
+    this.needsRestart.set(needsRestart);
+  }
+
   @Override
   public int hashCode() {
     return Objects.hash(displayName, themeVersion);
@@ -105,12 +124,7 @@ public class Theme {
     return properties;
   }
 
-  public static Theme fromProperties(Properties properties) {
-    return new Theme(
-        properties.getProperty(DISPLAY_NAME),
-        properties.getProperty(AUTHOR),
-        Integer.valueOf(properties.getProperty(COMPATIBILITY_VERSION)),
-        properties.getProperty(THEME_VERSION)
-    );
+  public BooleanProperty needsRestartProperty() {
+    return needsRestart;
   }
 }

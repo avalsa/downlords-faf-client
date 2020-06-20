@@ -239,7 +239,14 @@ public class SettingsController implements Controller<Node> {
     });
 
     currentThemeChangeListener = (observable, oldValue, newValue) -> themeComboBox.getSelectionModel().select(newValue);
-    selectedThemeChangeListener = (observable, oldValue, newValue) -> uiService.setTheme(newValue);
+    selectedThemeChangeListener = (observable, oldValue, newValue) -> {
+      uiService.setTheme(newValue);
+      if (newValue.isNeedsRestart()) {
+        notificationService.addNotification(new PersistentNotification(i18n.get("theme.needsRestart.message", newValue.getDisplayName()), Severity.WARN,
+            Collections.singletonList(new Action(i18n.get("theme.needsRestart.quit"), event -> Platform.exit()))));
+        // FIXME reload application (stage & application context) https://github.com/FAForever/downlords-faf-client/issues/1794
+      }
+    };
 
     JavaFxUtil.addListener(preferences.getNotification().toastPositionProperty(), (observable, oldValue, newValue) -> setSelectedToastPosition(newValue));
     setSelectedToastPosition(preferences.getNotification().getToastPosition());

@@ -110,14 +110,7 @@ public class UiService implements InitializingBean, DisposableBean {
   public static final String CHAT_LIST_STATUS_LOBBYING = "theme/images/player_status/lobby.png";
   public static final String CHAT_LIST_STATUS_PLAYING = "theme/images/player_status/playing.png";
 
-  public static Theme DEFAULT_THEME = new Theme() {
-    {
-      setAuthor("Downlord");
-      setCompatibilityVersion(1);
-      setDisplayName("Default");
-      setThemeVersion("1.0");
-    }
-  };
+  public static Theme DEFAULT_THEME = new Theme("Default", "Downlord", 1, "1", false);
 
   private static final Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
   /**
@@ -329,9 +322,9 @@ public class UiService implements InitializingBean, DisposableBean {
       preferencesService.getPreferences().setThemeName(getThemeDirectory(theme).getFileName().toString());
     }
     preferencesService.storeInBackground();
-    reloadStylesheet();
     currentTheme.set(theme);
     cacheManager.getCache(CacheNames.THEME_IMAGES).clear();
+    reloadStylesheet();
   }
 
   /**
