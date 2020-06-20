@@ -260,7 +260,7 @@ public class SettingsController implements Controller<Node> {
     configureTimeSetting(preferences);
     configureChatSetting(preferences);
     configureLanguageSelection();
-    configureThemeSelection(preferences);
+    configureThemeSelection();
     configureToastScreen(preferences);
     configureStartTab(preferences);
 
@@ -392,13 +392,10 @@ public class SettingsController implements Controller<Node> {
     }
   }
 
-  private void configureThemeSelection(Preferences preferences) {
+  private void configureThemeSelection() {
     themeComboBox.setItems(FXCollections.observableArrayList(uiService.getAvailableThemes()));
 
-    Theme currentTheme = themeComboBox.getItems().stream()
-        .filter(theme -> theme.getDisplayName().equals(preferences.getThemeName()))
-        .findFirst().orElse(UiService.DEFAULT_THEME);
-    themeComboBox.getSelectionModel().select(currentTheme);
+    themeComboBox.getSelectionModel().select(uiService.getCurrentTheme());
 
     themeComboBox.getSelectionModel().selectedItemProperty().addListener(selectedThemeChangeListener);
     JavaFxUtil.addListener(uiService.currentThemeProperty(), new WeakChangeListener<>(currentThemeChangeListener));

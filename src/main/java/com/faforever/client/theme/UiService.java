@@ -136,10 +136,10 @@ public class UiService implements InitializingBean, DisposableBean {
   private final I18n i18n;
 
   private WatchService watchService;
-  private ObservableMap<String, Theme> themesByFolderName;
-  private Map<Theme, String> folderNamesByTheme;
-  private Map<Path, WatchKey> watchKeys;
-  private ObjectProperty<Theme> currentTheme;
+  private final ObservableMap<String, Theme> themesByFolderName;
+  private final Map<Theme, String> folderNamesByTheme;
+  private final Map<Path, WatchKey> watchKeys;
+  private final ObjectProperty<Theme> currentTheme;
   private Path currentTempStyleSheet;
   private MessageSourceResourceBundle resources;
 
@@ -178,7 +178,12 @@ public class UiService implements InitializingBean, DisposableBean {
     loadThemes();
 
     String storedTheme = preferencesService.getPreferences().getThemeName();
-    setTheme(themesByFolderName.get(storedTheme));
+    if (themesByFolderName.containsKey(storedTheme)) {
+      setTheme(themesByFolderName.get(storedTheme));
+    } else {
+      logger.warn("Selected theme was not found in folder {}, falling back to default.", storedTheme);
+      setTheme(DEFAULT_THEME);
+    }
 
     loadWebViewsStyleSheet(getWebViewStyleSheet());
   }
@@ -235,11 +240,9 @@ public class UiService implements InitializingBean, DisposableBean {
     deleteStylesheetsCacheDirectory();
   }
 
-  private void stopWatchingTheme(Theme theme) {
-    Path path = getThemeDirectory(theme);
-    if (watchKeys.containsKey(path)) {
-      watchKeys.remove(path).cancel();
-    }
+  private void stopWatchingOldThemes() {
+    watchKeys.values().forEach(WatchKey::cancel);
+    watchKeys.clear();
   }
 
   /**
@@ -317,7 +320,7 @@ public class UiService implements InitializingBean, DisposableBean {
 
 
   public void setTheme(Theme theme) {
-    stopWatchingTheme(theme);
+    stopWatchingOldThemes();
 
     if (theme == DEFAULT_THEME) {
       preferencesService.getPreferences().setThemeName(DEFAULT_THEME_NAME);
@@ -367,7 +370,8 @@ public class UiService implements InitializingBean, DisposableBean {
         JFoenixResources.load("css/jfoenix-fonts.css").toExternalForm(),
         JFoenixResources.load("css/jfoenix-design.css").toExternalForm(),
         getThemeFile("theme/jfoenix.css"),
-        getSceneStyleSheet()
+        getSceneStyleSheet(),
+        getThemeFile("theme/style_extension.css")
     };
   }
 
@@ -390,11 +394,13 @@ public class UiService implements InitializingBean, DisposableBean {
     });
   }
 
-
   public Collection<Theme> getAvailableThemes() {
     return new ArrayList<>(themesByFolderName.values());
   }
 
+  public Theme getCurrentTheme() {
+    return currentTheme.get();
+  }
 
   public ReadOnlyObjectProperty<Theme> currentThemeProperty() {
     return currentTheme;
