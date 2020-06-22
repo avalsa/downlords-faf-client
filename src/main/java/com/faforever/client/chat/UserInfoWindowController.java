@@ -1,6 +1,6 @@
 package com.faforever.client.chat;
 
-import ch.micheljung.fxborderlessscene.borderless.BorderlessScene;
+import ch.micheljung.fxwindow.FxStage;
 import com.faforever.client.achievements.AchievementItemController;
 import com.faforever.client.achievements.AchievementService;
 import com.faforever.client.achievements.AchievementService.AchievementState;
@@ -31,6 +31,7 @@ import javafx.beans.binding.Bindings;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.Node;
+import javafx.scene.Scene;
 import javafx.scene.chart.LineChart;
 import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.PieChart;
@@ -47,7 +48,6 @@ import javafx.scene.layout.Pane;
 import javafx.scene.layout.Region;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
-import javafx.stage.StageStyle;
 import javafx.stage.Window;
 import javafx.util.StringConverter;
 import lombok.RequiredArgsConstructor;
@@ -134,7 +134,7 @@ public class UserInfoWindowController implements Controller<Node> {
   public TableColumn<NameRecord, String> nameColumn;
   private Player player;
   private Map<String, AchievementItemController> achievementItemById = new HashMap<>();
-  private Map<String, AchievementDefinition> achievementDefinitionById= new HashMap<>();
+  private Map<String, AchievementDefinition> achievementDefinitionById = new HashMap<>();
   private Window ownerWindow;
 
   private static boolean isUnlocked(PlayerAchievement playerAchievement) {
@@ -424,15 +424,16 @@ public class UserInfoWindowController implements Controller<Node> {
 
   public void show() {
     Assert.checkNullIllegalState(ownerWindow, "ownerWindow must be set");
-    Stage userInfoWindow = new Stage(StageStyle.TRANSPARENT);
-    userInfoWindow.initModality(Modality.NONE);
-    userInfoWindow.initOwner(ownerWindow);
 
-    BorderlessScene scene = uiService.createScene(userInfoWindow, userInfoRoot);
-    userInfoWindow.setScene(scene);
-    userInfoWindow.show();
-    userInfoWindow.showingProperty().addListener((observable, oldValue, newValue) -> {
-      if(!newValue) {
+    FxStage fxStage = FxStage.create(userInfoRoot)
+        .initOwner(ownerWindow)
+        .initModality(Modality.WINDOW_MODAL)
+        .withSceneFactory(uiService::createScene)
+        .allowMinimize(false)
+        .apply();
+
+    fxStage.getStage().showingProperty().addListener((observable, oldValue, newValue) -> {
+      if (!newValue) {
         userInfoRoot.getChildren().clear();
       }
     });

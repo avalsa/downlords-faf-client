@@ -79,9 +79,9 @@ public class SettingsControllerTest extends AbstractPlainJavaFxTest {
 
   @Test
   public void testSearchForBetaUpdateIfOptionIsTurnedOn() {
-    instance.prereleaseToggleButton.setSelected(true);
+    instance.prereleaseToggle.setSelected(true);
     verify(clientUpdateService).checkForUpdateInBackground();
-    instance.prereleaseToggleButton.setSelected(false);
+    instance.prereleaseToggle.setSelected(false);
     verifyNoMoreInteractions(clientUpdateService);
   }
 

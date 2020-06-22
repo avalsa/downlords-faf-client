@@ -2,7 +2,7 @@ package com.faforever.client.notification;
 
 import com.faforever.client.fx.Controller;
 import com.faforever.client.fx.WebViewConfigurer;
-import com.jfoenix.controls.JFXButton;
+import javafx.scene.control.Button;
 import com.jfoenix.controls.JFXDialogLayout;
 import javafx.application.Platform;
 import javafx.scene.Node;
@@ -72,7 +72,7 @@ public class ImmediateNotificationController implements Controller<Node> {
   }
 
   private Button createButton(Action action) {
-    JFXButton button = new JFXButton(action.getTitle());
+    Button button = new Button(action.getTitle());
     button.setOnAction(event -> {
       action.call(event);
       if (action.getType() == Action.Type.OK_DONE) {

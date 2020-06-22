@@ -93,14 +93,14 @@ public class SettingsController implements Controller<Node> {
   public Toggle customColorsToggle;
   public Toggle randomColorsToggle;
   public Toggle defaultColorsToggle;
-  public Toggle hideFoeToggle;
-  public Toggle forceRelayToggle;
+  public CheckBox hideFoeToggle;
+  public CheckBox forceRelayToggle;
   public TextField gameLocationTextField;
-  public Toggle autoDownloadMapsToggle;
+  public CheckBox autoDownloadMapsToggle;
   public TextField maxMessagesTextField;
-  public Toggle imagePreviewToggle;
-  public Toggle enableNotificationsToggle;
-  public Toggle enableSoundsToggle;
+  public CheckBox imagePreviewToggle;
+  public CheckBox enableNotificationsToggle;
+  public CheckBox enableSoundsToggle;
   public CheckBox displayFriendOnlineToastCheckBox;
   public CheckBox displayFriendOfflineToastCheckBox;
   public CheckBox playFriendOnlineSoundCheckBox;
@@ -117,9 +117,9 @@ public class SettingsController implements Controller<Node> {
   public ComboBox<Theme> themeComboBox;
   public ToggleGroup toastPositionToggleGroup;
   public ComboBox<Screen> toastScreenComboBox;
-  public ToggleButton bottomLeftToastButton;
-  public ToggleButton topRightToastButton;
-  public ToggleButton topLeftToastButton;
+  public Toggle bottomLeftToastButton;
+  public Toggle topRightToastButton;
+  public Toggle topLeftToastButton;
   public ToggleButton bottomRightToastButton;
   public PasswordField currentPasswordField;
   public PasswordField newPasswordField;
@@ -129,19 +129,24 @@ public class SettingsController implements Controller<Node> {
   public Label passwordChangeErrorLabel;
   public Label passwordChangeSuccessLabel;
   public ComboBox<UnitDataBaseType> unitDatabaseComboBox;
-  public Toggle notifyOnAtMentionOnlyToggle;
+  public CheckBox notifyOnAtMentionOnlyToggle;
   public Pane languagesContainer;
   public TextField backgroundImageLocation;
-  public ToggleButton disallowJoinsCheckBox;
-  public ToggleButton secondaryVaultLocationToggleButton;
+  public CheckBox disallowJoinsCheckBox;
+  public CheckBox secondaryVaultLocationToggle;
   public Button autoJoinChannelsButton;
-  public ToggleButton advancedIceLogToggleButton;
-  public ToggleButton prereleaseToggleButton;
+  public CheckBox advancedIceLogToggle;
+  public CheckBox prereleaseToggle;
+  public Region settingsHeader;
+  public ComboBox<NavigationItem> startTabChoiceBox;
+  public Label notifyAtMentionTitle;
+  public Label notifyAtMentionDescription;
+
   private final InvalidationListener availableLanguagesListener;
+
   private Popup autojoinChannelsPopUp;
   private ChangeListener<Theme> selectedThemeChangeListener;
   private ChangeListener<Theme> currentThemeChangeListener;
-  public ComboBox<NavigationItem> startTabChoiceBox;
 
   public SettingsController(UserService userService, PreferencesService preferencesService, UiService uiService,
                             I18n i18n, EventBus eventBus, NotificationService notificationService,
@@ -291,22 +296,26 @@ public class SettingsController implements Controller<Node> {
     passwordChangeErrorLabel.setVisible(false);
     addAutoJoinChannelsPopup();
 
-    secondaryVaultLocationToggleButton.setSelected(preferences.getForgedAlliance().getVaultBaseDirectory().equals(preferencesService.getSecondaryVaultLocation()));
-    secondaryVaultLocationToggleButton.selectedProperty().addListener(observable -> {
-      Path vaultBaseDirectory = secondaryVaultLocationToggleButton.isSelected() ? preferencesService.getSecondaryVaultLocation() : preferencesService.getPrimaryVaultLocation();
+    secondaryVaultLocationToggle.setSelected(preferences.getForgedAlliance().getVaultBaseDirectory().equals(preferencesService.getSecondaryVaultLocation()));
+    secondaryVaultLocationToggle.selectedProperty().addListener(observable -> {
+      Path vaultBaseDirectory = secondaryVaultLocationToggle.isSelected() ? preferencesService.getSecondaryVaultLocation() : preferencesService.getPrimaryVaultLocation();
       preferences.getForgedAlliance().setVaultBaseDirectory(vaultBaseDirectory);
     });
 
-    advancedIceLogToggleButton.selectedProperty().bindBidirectional(preferences.advancedIceLogEnabledProperty());
+    advancedIceLogToggle.selectedProperty().bindBidirectional(preferences.advancedIceLogEnabledProperty());
 
-    prereleaseToggleButton.selectedProperty().bindBidirectional(preferences.prereleaseCheckEnabledProperty());
-    prereleaseToggleButton.selectedProperty().addListener((observable, oldValue, newValue) -> {
+    prereleaseToggle.selectedProperty().bindBidirectional(preferences.prereleaseCheckEnabledProperty());
+    prereleaseToggle.selectedProperty().addListener((observable, oldValue, newValue) -> {
       if (newValue != null && newValue && (oldValue == null || !oldValue)) {
         clientUpdateService.checkForUpdateInBackground();
       }
     });
 
     initUnitDatabaseSelection(preferences);
+
+    String username = userService.getUsername();
+    notifyAtMentionTitle.setText(i18n.get("settings.chat.notifyOnAtMentionOnly", username));
+    notifyAtMentionDescription.setText(i18n.get("settings.chat.notifyOnAtMentionOnly.description", username));
   }
 
   private void configureStartTab(Preferences preferences) {

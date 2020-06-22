@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import com.jfoenix.controls.JFXButton?>
+<?import javafx.scene.control.Button?>
 <?import com.jfoenix.controls.JFXProgressBar?>
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Label?>
@@ -78,13 +78,13 @@
                                         GridPane.columnSpan="2147483647">
                                       <HBox alignment="TOP_RIGHT" spacing="10.0">
                                           <children>
-                                              <JFXButton fx:id="createGameButton" defaultButton="true"
+                                              <Button fx:id="createGameButton" defaultButton="true"
                                                          mnemonicParsing="false" onAction="#onCreateGameButtonClicked"
                                                          text="%games.create"/>
-                                              <JFXButton fx:id="installButton" defaultButton="true"
+                                              <Button fx:id="installButton" defaultButton="true"
                                                          mnemonicParsing="false" onAction="#onInstallButtonClicked"
                                                          text="%mapVault.installButtonFormat"/>
-                                              <JFXButton fx:id="uninstallButton" mnemonicParsing="false"
+                                              <Button fx:id="uninstallButton" mnemonicParsing="false"
                                                          onAction="#onUninstallButtonClicked"
                                                          text="%mapVault.uninstall"/>
                                           </children>
@@ -112,7 +112,7 @@
                                       <children>
                                           <Label maxHeight="1.7976931348623157E308" text="%map.ranked"/>
                                           <Label fx:id="isRankedLabel" maxHeight="1.7976931348623157E308"/>
-                                          <JFXButton fx:id="unrankButton" mnemonicParsing="false" onAction="#unrankMap"
+                                          <Button fx:id="unrankButton" mnemonicParsing="false" onAction="#unrankMap"
                                                      text="%map.unrank"/>
                                       </children>
                                   </HBox>
@@ -122,7 +122,7 @@
                                           <Label maxHeight="1.7976931348623157E308" minHeight="0.0" minWidth="0.0"
                                                  text="%map.hidden"/>
                                           <Label fx:id="isHiddenLabel" maxHeight="1.7976931348623157E308"/>
-                                          <JFXButton fx:id="hideButton" minHeight="0.0" minWidth="0.0"
+                                          <Button fx:id="hideButton" minHeight="0.0" minWidth="0.0"
                                                      mnemonicParsing="false" onAction="#hideMap" text="%map.hide"/>
                                       </children>
                                   </HBox>
@@ -144,13 +144,13 @@
                   </VBox>
               </content>
           </ScrollPane>
-          <JFXButton cancelButton="true" focusTraversable="false" onAction="#onCloseButtonClicked"
+          <Button cancelButton="true" focusTraversable="false" onAction="#onCloseButtonClicked"
                      AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
               <styleClass>
                   <String fx:value="window-button"/>
                   <String fx:value="close-button"/>
               </styleClass>
-          </JFXButton>
+          </Button>
       </children>
     </AnchorPane>
   </children>
