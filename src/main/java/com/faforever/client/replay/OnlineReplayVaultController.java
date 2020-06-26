@@ -109,7 +109,7 @@ public class OnlineReplayVaultController extends AbstractViewController<Node> {
 
     BooleanBinding inSearchableState = Bindings.createBooleanBinding(() -> state.get() != State.SEARCHING, state);
     searchController.setSearchButtonDisabledCondition(inSearchableState);
-    searchController.setOnlyShowLastYearCheckBoxVisible(true);
+    searchController.setOnlyShowLastYearCheckBoxVisible(true, true);
   }
 
   private void displaySearchResult(List<Replay> replays, boolean append) {
@@ -164,7 +164,7 @@ public class OnlineReplayVaultController extends AbstractViewController<Node> {
   protected void onDisplay(NavigateEvent navigateEvent) {
     if (navigateEvent instanceof ShowReplayEvent) {
       if (state.get() == State.UNINITIALIZED) {
-        state.addListener(new ChangeListener<State>() {
+        state.addListener(new ChangeListener<>() {
           @Override
           public void changed(ObservableValue<? extends State> observable, State oldValue, State newValue) {
             if (newValue != State.UNINITIALIZED) {
@@ -281,7 +281,7 @@ public class OnlineReplayVaultController extends AbstractViewController<Node> {
 
   private void displayReplaysFromSupplier(Supplier<CompletableFuture<List<Replay>>> mapsSupplier) {
     currentPage = 1;
-    this.currentSupplier = mapsSupplier;
+    currentSupplier = mapsSupplier;
     mapsSupplier.get()
         .thenAccept(this::displaySearchResult)
         .exceptionally(throwable -> {
