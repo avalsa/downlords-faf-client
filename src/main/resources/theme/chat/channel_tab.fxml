@@ -13,6 +13,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.TextFlow?>
 <?import javafx.scene.web.WebView?>
+<?import javafx.scene.control.Button?>
 <Tab xmlns:fx="http://javafx.com/fxml/1" fx:id="channelTabRoot" xmlns="http://javafx.com/javafx/10.0.2"
      fx:controller="com.faforever.client.chat.ChannelTabController">
   <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="0.0" minWidth="0.0" onKeyReleased="#onKeyReleased">
@@ -36,6 +37,9 @@
                             <JFXTextField fx:id="searchField" promptText="%chat.filter.prompt" visible="false"/>
                         </children>
                     </HBox>
+                    <Button fx:id="toggleSidePaneButton" mnemonicParsing="false" onAction="#toggleSidePane"
+                            styleClass="layout-button" text="" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="40.0">
+                    </Button>
                     <JFXTextField fx:id="messageTextField" maxWidth="1.7976931348623157E308" onAction="#onSendMessage"
                                   promptText="%chat.messagePrompt"
                                   AnchorPane.bottomAnchor="2.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="0.0">
@@ -43,7 +47,7 @@
                 </children>
             </AnchorPane>
 
-          <VBox fx:id="channelTabScrollPaneVBox" maxHeight="1.7976931348623157E308" SplitPane.resizableWithParent="false">
+          <VBox fx:id="channelTabScrollPaneVBox" maxHeight="1.7976931348623157E308" SplitPane.resizableWithParent="false" minWidth="300.0">
             <children>
               <HBox alignment="CENTER">
                 <children>

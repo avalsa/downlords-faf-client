@@ -146,6 +146,7 @@ public class ChannelTabController extends AbstractChatTabController {
   public ListView<CategoryOrChatUserListItem> chatUserListView;
   public VBox topicPane;
   public TextFlow topicText;
+  public Button toggleSidePaneButton;
 
   private Channel channel;
   private Popup filterUserPopup;
@@ -660,5 +661,17 @@ public class ChannelTabController extends AbstractChatTabController {
     // listeners which we're trying to avoid.
     ChatChannelUser chatUser = chatService.getChatUser(event.getPlayer().getUsername(), channel.getName());
     associateChatUserWithPlayer(event.getPlayer(), chatUser);
+  }
+
+  public void toggleSidePane(ActionEvent actionEvent) {
+    if (channelTabScrollPaneVBox.isManaged()) {
+      toggleSidePaneButton.setText("");
+      channelTabScrollPaneVBox.setManaged(false);
+      splitPane.setDividerPositions(1.0);
+    } else {
+      toggleSidePaneButton.setText("");
+      channelTabScrollPaneVBox.setManaged(true);
+      splitPane.setDividerPositions(0.8);
+    }
   }
 }

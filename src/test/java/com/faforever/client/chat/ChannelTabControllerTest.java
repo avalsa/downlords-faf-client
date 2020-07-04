@@ -389,4 +389,12 @@ public class ChannelTabControllerTest extends AbstractPlainJavaFxTest {
     WaitForAsyncUtils.waitForFxEvents();
     assertEquals(instance.topicText.getChildren().size(), 4);
   }
+
+  @Test
+  public void testChannelListHide() {
+    instance.toggleSidePaneButton.fire();
+    WaitForAsyncUtils.waitForFxEvents();
+    assertFalse(instance.channelTabScrollPaneVBox.isManaged());
+    assertEquals(instance.toggleSidePaneButton.getText(), "");
+  }
 }
