@@ -93,6 +93,7 @@ public class OnlineReplayVaultController extends AbstractViewController<Node> {
     state = new SimpleObjectProperty<>(State.UNINITIALIZED);
   }
 
+  @Override
   public void initialize() {
     super.initialize();
     JavaFxUtil.fixScrollSpeed(scrollPane);
@@ -200,7 +201,6 @@ public class OnlineReplayVaultController extends AbstractViewController<Node> {
     int playerId = event.getPlayerId();
     currentPage = 1;
     SortConfig sortConfig = new SortConfig("startTime", SortOrder.DESC);
-
     displayReplaysFromSupplier(() -> replayService.getReplaysForPlayer(playerId, MAX_SEARCH_RESULTS, 1, sortConfig));
   }
 

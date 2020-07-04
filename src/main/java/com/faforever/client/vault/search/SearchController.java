@@ -29,10 +29,9 @@ import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
-import java.text.SimpleDateFormat;
+import java.time.OffsetDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -45,6 +44,8 @@ public class SearchController implements Controller<Pane> {
   private final UiService uiService;
   private final I18n i18n;
   private final PreferencesService preferencesService;
+
+  private final static String END_TIME_QUERY = "endTime=ge=";
   /**
    * The first query element.
    */
@@ -236,15 +237,15 @@ public class SearchController implements Controller<Pane> {
       }
       condition = currentCondition;
     }
-    return condition.get().query(new RSQLVisitor()) + ";" + lastYearQuery;
+    if (lastYearQuery.isEmpty()) {
+      return (String) condition.get().query(new RSQLVisitor());
+    }
+    return String.format("%s;%s", condition.get().query(new RSQLVisitor()), lastYearQuery);
   }
 
   private String generateOnlyLastYearQuery() {
-    Calendar calendar = Calendar.getInstance();
-    calendar.add(Calendar.YEAR, -1);
-    Date date = calendar.getTime();
-    SimpleDateFormat dateFormater = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
-    return "endTime=ge=" + dateFormater.format(date);
+    OffsetDateTime time = OffsetDateTime.now();
+    return END_TIME_QUERY + time.format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss'Z'"));
   }
 
   @Override
