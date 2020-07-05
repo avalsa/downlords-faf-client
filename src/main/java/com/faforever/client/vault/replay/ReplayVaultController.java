@@ -80,7 +80,6 @@ public class ReplayVaultController extends AbstractViewController<Node> {
 
   @Override
   public void initialize() {
-    pagination.managedProperty().bind(pagination.visibleProperty());
 
     replayTableView.setRowFactory(param -> replayRowFactory());
     replayTableView.getSortOrder().setAll(Collections.singletonList(timeColumn));
