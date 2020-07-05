@@ -26,6 +26,7 @@ import java.util.function.Consumer;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
@@ -101,6 +102,29 @@ public class SearchControllerTest extends AbstractPlainJavaFxTest {
     specificationController.valueField.setValue("JUnit");
 
     assertThat(instance.queryTextField.getText(), is("name==JUnit"));
+  }
+
+  @Test
+  public void testBuildQueryWithCheckbox() throws Exception {
+    instance.onAddCriteriaButtonClicked();
+
+    Condition condition = mock(Condition.class);
+    when(specificationController.appendTo(any())).thenReturn(Optional.of(condition));
+    when(condition.query(any(RSQLVisitor.class))).thenReturn("name==JUnit");
+
+    specificationController.propertyField.setValue("name");
+    specificationController.operationField.getSelectionModel().select(0);
+    specificationController.valueField.setValue("JUnit");
+
+    instance.setOnlyShowLastYearCheckBoxVisible(true, true);
+
+    assertTrue(instance.queryTextField.getText().matches("name==JUnit;endTime=ge=\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}Z"));
+  }
+
+  @Test
+  public void testSelectOnlyShowLastYearCheckbox() throws Exception {
+    instance.setOnlyShowLastYearCheckBoxVisible(true, true);
+    assertTrue(instance.onlyShowLastYearCheckBox.isSelected());
   }
 
   @Test
