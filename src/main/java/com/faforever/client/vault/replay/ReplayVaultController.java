@@ -21,6 +21,8 @@ import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.ObservableMap;
 import javafx.scene.Node;
+import javafx.scene.control.Label;
+import javafx.scene.control.Pagination;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableRow;
@@ -29,6 +31,7 @@ import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
+import javafx.util.Callback;
 import javafx.util.StringConverter;
 import lombok.RequiredArgsConstructor;
 import org.jetbrains.annotations.NotNull;
@@ -73,6 +76,7 @@ public class ReplayVaultController extends AbstractViewController<Node> {
   public TableColumn<Replay, Duration> durationColumn;
   public TableColumn<Replay, String> gameTypeColumn;
   public TableColumn<Replay, MapBean> mapColumn;
+  public Pagination pagination;
 
   private Boolean isDisplayingForFirstTime = true;
 
@@ -256,7 +260,19 @@ public class ReplayVaultController extends AbstractViewController<Node> {
     replayTableView.setVisible(true);
     loadingPane.setVisible(false);
   }
-  
+
+  public static class MyPageFactory implements Callback<Integer, Node>{
+    @Override
+    public Node call (Integer pageIndex){
+      return new Label();
+    }
+  }
+
+  public Pagination getPagination() {
+    pagination.setPageFactory(new MyPageFactory());
+    return pagination;
+  }
+
   public Node getRoot() {
     return replayVaultRoot;
   }
