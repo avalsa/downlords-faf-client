@@ -107,6 +107,14 @@ public class SearchControllerTest extends AbstractPlainJavaFxTest {
   @Test
   public void testBuildQueryWithCheckbox() throws Exception {
     instance.onAddCriteriaButtonClicked();
+    instance.setOnlyShowLastYearCheckBoxVisible(true, true);
+
+    assertTrue(instance.queryTextField.getText().matches("endTime=ge=\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}Z"));
+  }
+
+  @Test
+  public void testBuildQueryWithCheckboxAndQuery() throws Exception {
+    instance.onAddCriteriaButtonClicked();
 
     Condition condition = mock(Condition.class);
     when(specificationController.appendTo(any())).thenReturn(Optional.of(condition));
