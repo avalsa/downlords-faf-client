@@ -29,8 +29,7 @@ import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
-import java.time.OffsetDateTime;
-import java.time.format.DateTimeFormatter;
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -45,10 +44,6 @@ public class SearchController implements Controller<Pane> {
   private final I18n i18n;
   private final PreferencesService preferencesService;
 
-  private final static String END_TIME_QUERY = "endTime=ge=";
-  /**
-   * The first query element.
-   */
   public LogicalNodeController initialLogicalNodeController;
   public Pane criteriaPane;
   public TextField queryTextField;
@@ -222,14 +217,14 @@ public class SearchController implements Controller<Pane> {
   private String buildQuery(SpecificationController initialSpecification, List<LogicalNodeController> queryNodes) {
     QBuilder qBuilder = new QBuilder();
     Optional<Condition> condition = initialSpecification.appendTo(qBuilder);
-    String lastYearQuery = "";
-    if (onlyShowLastYearCheckBox.isVisible() && onlyShowLastYearCheckBox.isSelected()) {
-      lastYearQuery = generateOnlyLastYearQuery();
-    }
+
+    boolean isLastYearChecked = onlyShowLastYearCheckBox.isVisible() && onlyShowLastYearCheckBox.isSelected();
+    Condition conditionForLastYear = qBuilder.instant("endTime").after(ZonedDateTime.now().minusYears(1).toInstant(), false);
 
     if (!condition.isPresent()) {
-      return lastYearQuery;
+      return isLastYearChecked ? (String) conditionForLastYear.query(new RSQLVisitor()) : "";
     }
+
     for (LogicalNodeController queryNode : queryNodes) {
       Optional<Condition> currentCondition = queryNode.appendTo(condition.get());
       if (!currentCondition.isPresent()) {
@@ -237,17 +232,11 @@ public class SearchController implements Controller<Pane> {
       }
       condition = currentCondition;
     }
-    if (lastYearQuery.isEmpty()) {
-      return (String) condition.get().query(new RSQLVisitor());
-    }
-    return String.format("%s;%s", condition.get().query(new RSQLVisitor()), lastYearQuery);
+
+    Condition conditionToReturn = isLastYearChecked ? qBuilder.and(condition.get(), conditionForLastYear) : condition.get();
+    return (String) conditionToReturn.query(new RSQLVisitor());
   }
 
-  private String generateOnlyLastYearQuery() {
-    OffsetDateTime time = OffsetDateTime.now();
-    time = time.minusYears(1L);
-    return END_TIME_QUERY + time.format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss'Z'"));
-  }
 
   @Override
   public Pane getRoot() {
