@@ -54,7 +54,6 @@ public class SearchController implements Controller<Pane> {
   public ComboBox<Property> sortPropertyComboBox;
   public ComboBox<SortOrder> sortOrderChoiceBox;
   public HBox sortBox;
-  public CheckBox onlyShowLastYearCheckBox;
 
   private final List<LogicalNodeController> queryNodes;
   private InvalidationListener queryInvalidationListener;
@@ -75,16 +74,10 @@ public class SearchController implements Controller<Pane> {
     queryNodes = new ArrayList<>();
   }
 
+  @Override
   public void initialize() {
     queryTextField.managedProperty().bind(queryTextField.visibleProperty());
     queryTextField.visibleProperty().bind(displayQueryCheckBox.selectedProperty());
-
-    //FIXME code style probably not good
-    //FIXME this might always be visible, only show this on online replays
-    onlyShowLastYearCheckBox.selectedProperty().addListener((observable, oldValue, newValue) -> {
-        //TODO implement adding filter to query
-    });
-    onlyShowLastYearCheckBox.setSelected(true);
 
     initialLogicalNodeController.logicalOperatorField.managedProperty()
         .bind(initialLogicalNodeController.logicalOperatorField.visibleProperty());
@@ -102,7 +95,7 @@ public class SearchController implements Controller<Pane> {
   }
 
   private void initSorting() {
-    sortPropertyComboBox.setConverter(new StringConverter<Property>() {
+    sortPropertyComboBox.setConverter(new StringConverter<>() {
       @Override
       public String toString(Property property) {
         return i18n.get(property.getI18nKey());
@@ -113,7 +106,7 @@ public class SearchController implements Controller<Pane> {
         throw new UnsupportedOperationException("Not supported");
       }
     });
-    sortOrderChoiceBox.setConverter(new StringConverter<SortOrder>() {
+    sortOrderChoiceBox.setConverter(new StringConverter<>() {
       @Override
       public String toString(SortOrder order) {
         return i18n.get(order.getI18nKey());
