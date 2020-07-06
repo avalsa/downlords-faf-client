@@ -39,6 +39,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 
+import java.io.IOException;
 import java.lang.invoke.MethodHandles;
 import java.time.Duration;
 import java.time.OffsetDateTime;
@@ -63,6 +64,7 @@ public class ReplayVaultController extends AbstractViewController<Node> {
   private final ReportingService reportingService;
   private final ApplicationContext applicationContext;
   private final UiService uiService;
+  private int currentPage;
 
   public Pane replayVaultRoot;
   public VBox loadingPane;
@@ -80,7 +82,6 @@ public class ReplayVaultController extends AbstractViewController<Node> {
 
   @Override
   public void initialize() {
-
     replayTableView.setRowFactory(param -> replayRowFactory());
     replayTableView.getSortOrder().setAll(Collections.singletonList(timeColumn));
 
@@ -102,6 +103,11 @@ public class ReplayVaultController extends AbstractViewController<Node> {
 
     durationColumn.setCellValueFactory(this::durationCellValueFactory);
     durationColumn.setCellFactory(this::durationCellFactory);
+
+    pagination.managedProperty().bind(pagination.visibleProperty());
+    pagination.currentPageIndexProperty().addListener((observable, oldValue, newValue) -> {
+      onPageChange(newValue.intValue() + 1);
+    });
   }
 
   @Override
@@ -118,6 +124,7 @@ public class ReplayVaultController extends AbstractViewController<Node> {
   protected void loadLocalReplaysInBackground() {
     replayService.startLoadingAndWatchingLocalReplays();
   }
+
 
   @NotNull
   private TableRow<Replay> replayRowFactory() {
@@ -233,6 +240,15 @@ public class ReplayVaultController extends AbstractViewController<Node> {
       }
     });
     return cell;
+  }
+
+  private void onPageChange(int page) {
+    try {
+      replayService.loadLocalReplays(page);
+    } catch (IOException e) {
+      //TODO: Logger
+      e.printStackTrace();
+    }
   }
 
   @NotNull

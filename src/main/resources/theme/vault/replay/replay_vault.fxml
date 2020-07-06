@@ -33,6 +33,6 @@
                 </Label>
             </children>
         </VBox>
-      <Pagination prefHeight="200.0" prefWidth="200.0" />
+      <Pagination fx:id="pagination" prefHeight="200.0" prefWidth="200.0" />
     </children>
 </StackPane>
