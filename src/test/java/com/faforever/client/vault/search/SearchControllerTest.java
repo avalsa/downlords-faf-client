@@ -12,7 +12,9 @@ import com.faforever.client.theme.UiService;
 import com.faforever.client.vault.search.SearchController.SearchConfig;
 import com.faforever.client.vault.search.SearchController.SortConfig;
 import com.faforever.client.vault.search.SearchController.SortOrder;
+import com.github.rutledgepaulv.qbuilders.builders.QBuilder;
 import com.github.rutledgepaulv.qbuilders.conditions.Condition;
+import com.github.rutledgepaulv.qbuilders.properties.concrete.InstantProperty;
 import com.github.rutledgepaulv.qbuilders.visitors.RSQLVisitor;
 import javafx.scene.control.ComboBox;
 import javafx.scene.layout.Pane;
@@ -20,6 +22,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
 
+import java.time.Instant;
 import java.util.Optional;
 import java.util.function.Consumer;
 
@@ -108,8 +111,7 @@ public class SearchControllerTest extends AbstractPlainJavaFxTest {
   public void testBuildQueryWithCheckbox() throws Exception {
     instance.onAddCriteriaButtonClicked();
     instance.setOnlyShowLastYearCheckBoxVisible(true, true);
-
-    assertTrue(instance.queryTextField.getText().matches("endTime=ge=\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}Z"));
+    assertTrue(instance.queryTextField.getText().matches("endTime=ge=\"\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}\\.\\d{9}Z\""));
   }
 
   @Test
@@ -118,7 +120,12 @@ public class SearchControllerTest extends AbstractPlainJavaFxTest {
 
     Condition condition = mock(Condition.class);
     when(specificationController.appendTo(any())).thenReturn(Optional.of(condition));
-    when(condition.query(any(RSQLVisitor.class))).thenReturn("name==JUnit");
+    QBuilder qBuilder = mock(QBuilder.class);
+    when(condition.and()).thenReturn(qBuilder);
+    InstantProperty instant = mock(InstantProperty.class);
+    when(qBuilder.instant(any())).thenReturn(instant);
+    when(instant.after(any(Instant.class), false)).thenReturn(condition);
+    when(condition.query(any(RSQLVisitor.class))).thenReturn("name==JUnit;endTime=ge=\"2020-06-09T20:20:20.000000000Z\"");
 
     specificationController.propertyField.setValue("name");
     specificationController.operationField.getSelectionModel().select(0);
@@ -126,7 +133,7 @@ public class SearchControllerTest extends AbstractPlainJavaFxTest {
 
     instance.setOnlyShowLastYearCheckBoxVisible(true, true);
 
-    assertTrue(instance.queryTextField.getText().matches("name==JUnit;endTime=ge=\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}Z"));
+    assertTrue(instance.queryTextField.getText().matches("name==JUnit;endTime=ge=\"\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}\\.\\d{9}Z\""));
   }
 
   @Test
