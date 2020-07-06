@@ -119,9 +119,14 @@ public class OnlineReplayVaultController extends AbstractViewController<Node> {
     searchController.setOnlyShowLastYearCheckBoxVisible(true, true);
 
     pagination.currentPageIndexProperty().addListener((observable, oldValue, newValue) -> {
-      SearchConfig searchConfig = searchController.getLastSearchConfig();
-      onPageChange(searchConfig, newValue.intValue() + 1, false);
-    });
+          if (oldValue != newValue) {
+            SearchConfig searchConfig = searchController.getLastSearchConfig();
+            onPageChange(searchConfig, newValue.intValue() + 1, false);
+          }
+        }
+    );
+    firstPageButton.setOnAction(event -> pagination.setCurrentPageIndex(0));
+    lastPageButton.setOnAction(event -> pagination.setCurrentPageIndex(pagination.getPageCount()));
   }
 
   private void displaySearchResult(List<Replay> replays, boolean append) {
