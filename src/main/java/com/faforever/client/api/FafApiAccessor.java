@@ -24,10 +24,10 @@ import com.faforever.client.api.dto.Tournament;
 import com.faforever.client.api.dto.TutorialCategory;
 import com.faforever.client.game.KnownFeaturedMod;
 import com.faforever.client.mod.FeaturedMod;
+import com.faforever.client.util.Tuple;
 import com.faforever.client.vault.search.SearchController.SearchConfig;
 import com.faforever.client.vault.search.SearchController.SortConfig;
 import com.faforever.commons.io.ByteCountListener;
-import com.github.jasminb.jsonapi.JSONAPIDocument;
 
 import java.io.IOException;
 import java.nio.file.Path;
@@ -43,6 +43,7 @@ public interface FafApiAccessor {
 
   List<PlayerAchievement> getPlayerAchievements(int playerId);
 
+  @SuppressWarnings("unchecked")
   List<PlayerEvent> getPlayerEvents(int playerId);
 
   List<AchievementDefinition> getAchievementDefinitions();
@@ -87,13 +88,11 @@ public interface FafApiAccessor {
 
   List<FeaturedModFile> getFeaturedModFiles(FeaturedMod featuredMod, Integer version);
 
-  List<Game> getNewestReplays(int count, int page);
+  Tuple<List<Game>, java.util.Map<String, ?>> getNewestReplays(int count, int page);
 
-  List<Game> getHighestRatedReplays(int count, int page);
+  Tuple<List<Game>, java.util.Map<String, ?>> getHighestRatedReplays(int count, int page);
 
-  List<Game> findReplaysByQuery(String condition, int maxResults, int page, SortConfig sortConfig);
-
-  JSONAPIDocument<List<Game>> findReplaysByQueryWithMeta(String query, int maxResults, int page, SortConfig sortConfig);
+  Tuple<List<Game>, java.util.Map<String, ?>> findReplaysByQuery(String query, int maxResults, int page, SortConfig sortConfig);
 
   Optional<MapVersion> findMapByFolderName(String folderName);
 

@@ -27,10 +27,10 @@ import com.faforever.client.api.dto.Tournament;
 import com.faforever.client.api.dto.TutorialCategory;
 import com.faforever.client.game.KnownFeaturedMod;
 import com.faforever.client.mod.FeaturedMod;
+import com.faforever.client.util.Tuple;
 import com.faforever.client.vault.search.SearchController.SearchConfig;
 import com.faforever.client.vault.search.SearchController.SortConfig;
 import com.faforever.commons.io.ByteCountListener;
-import com.github.jasminb.jsonapi.JSONAPIDocument;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
@@ -179,23 +179,19 @@ public class MockFafApiAccessor implements FafApiAccessor {
   }
 
   @Override
-  public List<Game> getNewestReplays(int count, int page) {
-    return Collections.emptyList();
+  public Tuple<List<Game>, java.util.Map<String, ?>> getNewestReplays(int count, int page) {
+    //FIXME Is this the correct way to change the three mock methods from list to tuple<list, map>, to return empty list and null?
+    return new Tuple(Collections.emptyList(), null);
   }
 
   @Override
-  public List<Game> getHighestRatedReplays(int count, int page) {
-    return Collections.emptyList();
+  public Tuple<List<Game>, java.util.Map<String, ?>> getHighestRatedReplays(int count, int page) {
+    return new Tuple(Collections.emptyList(), null);
   }
 
   @Override
-  public List<Game> findReplaysByQuery(String query, int maxResults, int page, SortConfig sortConfig) {
-    return Collections.emptyList();
-  }
-
-  @Override
-  public JSONAPIDocument<List<Game>> findReplaysByQueryWithMeta(String query, int maxResults, int page, SortConfig sortConfig) {
-    return null;
+  public Tuple<List<Game>, java.util.Map<String, ?>> findReplaysByQuery(String query, int maxResults, int page, SortConfig sortConfig) {
+    return new Tuple(Collections.emptyList(), null);
   }
 
   @Override
