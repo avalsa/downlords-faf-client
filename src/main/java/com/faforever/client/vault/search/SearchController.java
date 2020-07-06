@@ -29,7 +29,7 @@ import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
-import java.time.ZonedDateTime;
+import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -215,14 +215,14 @@ public class SearchController implements Controller<Pane> {
    * selected no or invalid values.
    */
   private String buildQuery(SpecificationController initialSpecification, List<LogicalNodeController> queryNodes) {
-    QBuilder qBuilder = new QBuilder();
+    QBuilder qBuilder = new QBuilder<>();
+    boolean isLastYearChecked = onlyShowLastYearCheckBox.isVisible() && onlyShowLastYearCheckBox.isSelected();
     Optional<Condition> condition = initialSpecification.appendTo(qBuilder);
 
-    boolean isLastYearChecked = onlyShowLastYearCheckBox.isVisible() && onlyShowLastYearCheckBox.isSelected();
-    Condition conditionForLastYear = qBuilder.instant("endTime").after(ZonedDateTime.now().minusYears(1).toInstant(), false);
-
     if (!condition.isPresent()) {
-      return isLastYearChecked ? (String) conditionForLastYear.query(new RSQLVisitor()) : "";
+      return isLastYearChecked ?
+          (String) qBuilder.instant("endTime").after(OffsetDateTime.now().minusYears(1).toInstant(), false).query(new RSQLVisitor())
+          : "";
     }
 
     for (LogicalNodeController queryNode : queryNodes) {
@@ -233,8 +233,9 @@ public class SearchController implements Controller<Pane> {
       condition = currentCondition;
     }
 
-    Condition conditionToReturn = isLastYearChecked ? qBuilder.and(condition.get(), conditionForLastYear) : condition.get();
-    return (String) conditionToReturn.query(new RSQLVisitor());
+    Condition toQuery = isLastYearChecked ? condition.get().and().instant("endTime").after(OffsetDateTime.now().minusYears(1).toInstant(), false)
+        : condition.get();
+    return (String) toQuery.query(new RSQLVisitor());
   }
 
 
