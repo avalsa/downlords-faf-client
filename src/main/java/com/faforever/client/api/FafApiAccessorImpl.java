@@ -319,29 +319,16 @@ public class FafApiAccessorImpl implements FafApiAccessor, InitializingBean {
 
   @Override
   public Tuple<List<Game>, java.util.Map<String, ?>> getHighestRatedReplays(int count, int page) {
-    //FIXME testing purposes duplicate newest replays
-    JSONAPIDocument<List<Game>> jsonApiDoc = getPageWithMeta("/data/game", count, page, ImmutableMap.of(
-        "sort", "-endTime",
-        "include", REPLAY_INCLUDES,
-        "filter", "endTime=isnull=false"
-    ));
-    return new Tuple<>(jsonApiDoc.get(), jsonApiDoc.getMeta());
-    /*JSONAPIDocument<List<Game>> jsonApiDoc = getPageWithMeta("/data/gameReviewsSummary", count, page, ImmutableMap.of(
+    JSONAPIDocument<List<GameReviewsSummary>> pageWithMeta = getPageWithMeta("/data/gameReviewsSummary", count, page, ImmutableMap.of(
         "sort", "-lowerBound",
-        // TODO this was done in a rush, check what is actually needed, this is the attempt to cahnge it to be in line with the other methods, led to some exception breaking replay main page
+        // TODO this was done in a rush, check what is actually needed
         "include", "game,game.featuredMod,game.playerStats,game.playerStats.player,game.reviews,game.reviews.player,game.mapVersion,game.mapVersion.map,game.mapVersion.reviews",
         "filter", "game.endTime=isnull=false"
     ));
-    return new Tuple<>(jsonApiDoc.get(), jsonApiDoc.getMeta());*/
-/*
-    return this.<GameReviewsSummary>getPageWithMeta("/data/gameReviewsSummary", count, page, ImmutableMap.of(
-        "sort", "-lowerBound",
-        // TODO this was done in a rush, check what is actually needed::: this is the old method, don't know why it was different from findReplaysByQuery and getNewestReplays
-        "include", "game,game.featuredMod,game.playerStats,game.playerStats.player,game.reviews,game.reviews.player,game.mapVersion,game.mapVersion.map,game.mapVersion.reviews",
-        "filter", "game.endTime=isnull=false"
-    )).stream()
+    return new Tuple<>(pageWithMeta.get().stream()
         .map(GameReviewsSummary::getGame)
-        .collect(Collectors.toList());*/
+        .collect(Collectors.toList()),
+        pageWithMeta.getMeta());
   }
 
   @Override
